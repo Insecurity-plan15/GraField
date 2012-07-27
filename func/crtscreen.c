@@ -11,31 +11,25 @@ static int nTextAttrib = 0x07;
 static int iCursorX = 0, iCursorY = 0;
 
 #define CRT_COLS 80
-#define CRT_ROWS 24
+#define CRT_ROWS 25
 
 /* Scrolls the screen */
 void crt_ScrollScreen(void)
 {
-    unsigned int blank;
-
-    /* A blank is defined as a NUL... we need to give it
-    *  backcolor too */
-    blank = 0x00 | (nTextAttrib << 8);
-
     /* Row 25 is the end, this means we need to scroll up */
-    if(iCursorY >= CRT_ROWS/*25*/)
+    if(iCursorY >= CRT_ROWS)
     {
         /* Move the current text chunk that makes up the screen
         *  back in the buffer by a line */
-        register unsigned int temp = iCursorY - CRT_ROWS/*25*/ + 1;
-        memcpy((unsigned char *)pCharAtVideoBuf,
-               (const unsigned char *)pCharAtVideoBuf + temp * CRT_COLS,
-               (CRT_ROWS/*25*/ - temp) * CRT_COLS * 2);
+        register unsigned int temp = iCursorY - CRT_ROWS + 1;
+        memcpy((unsigned char *) pCharAtVideoBuf,
+               (const unsigned char *) pCharAtVideoBuf + temp * CRT_COLS * 2,
+               (CRT_ROWS - temp) * CRT_COLS * 2);
 
         /* Finally, we set the chunk of memory that occupies
         *  the last line of text to our 'blank' character */
-        memsetw(pCharAtVideoBuf + (CRT_ROWS/*25*/ - temp) * CRT_COLS, blank, CRT_COLS);
-        iCursorY = CRT_ROWS/*25*/ - 1;
+        memsetw(pCharAtVideoBuf + (iCursorY - 1) * CRT_COLS * 2, '\0' | (nTextAttrib << 8), (temp + 1) * CRT_COLS);
+        iCursorY = CRT_ROWS;
     }
 }
 
@@ -66,17 +60,9 @@ void crt_UpdateCursor(void)
 /* Clears the screen */
 void crt_ClearScreen(void)
 {
-    register unsigned blank;
-    register int i;
-
-    /* Again, we need the 'short' that will be used to
-    *  represent a space with color */
-    blank = 0x20 | (nTextAttrib << 8);
-
     /* Sets the entire screen to spaces in our current
     *  color */
-    for(i = 0; i < CRT_ROWS/*25*/; i++)
-        memsetw(pCharAtVideoBuf + i * CRT_COLS, blank, CRT_COLS);
+    memsetw(pCharAtVideoBuf, '\0' | (nTextAttrib << 8), CRT_COLS * CRT_ROWS);
 
     /* Update out virtual cursor, and then move the
     *  hardware cursor */

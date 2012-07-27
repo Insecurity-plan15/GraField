@@ -15,9 +15,25 @@ memcpy:
 	movl	12(%ebp), %esi  /* src  */
 	movl	16(%ebp), %ecx  /* len  */
 
+	cmp	%edi, %esi
+	jb	.L1
+	mov	%esi, %eax
+	add	%esi, %ecx
+	cmp	%edi, %eax
+	ja	.L1
+
+	std
+	dec	%eax
+	mov	%eax, %esi
+	add	%edi, %ecx
+	dec	%edi
 	rep	movsb
 
-	movl	%edi, %eax
+.L1:
+	cld
+	rep	movsb
+
+	movl	8(%ebp), %eax
 
 	popl	%ecx
 	popl	%esi
@@ -36,9 +52,10 @@ memset:
 	movl	12(%ebp), %eax  /* value */
 	movl	16(%ebp), %ecx  /* len   */
 
+	cld
 	rep	stosb
 
-	movl	%edi, %eax
+	movl	8(%ebp), %eax
 
 	popl	%ecx
 	popl	%edi
@@ -56,9 +73,10 @@ memsetw:
 	movl	12(%ebp), %eax  /* value */
 	movl	16(%ebp), %ecx  /* len   */
 
+	cld
 	rep	stosw
 
-	movl	%edi, %eax
+	movl	8(%ebp), %eax
 
 	popl	%ecx
 	popl	%edi
@@ -74,15 +92,16 @@ strlen:
 	pushl	%ecx
 	movl	8(%ebp), %esi   /* str */
 
+	cld
 	xor	%ecx, %ecx
-.L1:
+.L2:
 	lodsb
 	test	%eax, %eax
-	jz	.L2
+	jz	.L3
 	inc	%ecx
-	jmp	.L1
+	jmp	.L2
 
-.L2:
+.L3:
 	mov	%ecx, %eax
 
 	popl	%eax

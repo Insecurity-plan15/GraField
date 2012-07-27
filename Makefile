@@ -31,14 +31,14 @@ run: out/kernel
 debug: out/kernel
 	# if you have problems setting breakpoints, use this.
 	# qemu -kernel out/kernel -no-kvm -s -S &
-	qemu -kernel out/kernel -s -S &
+	qemu -kernel out/kernel -machine accel=tcg -s -S &
 	@sleep 1
 	gdb out/kernel -ex 'target remote :1234'
 
 out/kernel: startup func
 	$(LD) $(LDFLAGS) -o out/kernel \
 	out/startup/kstart.o out/startup/startup.o \
-	out/func/memory.o out/func/crtscreen.o
+	out/func/crtscreen.o
 
 
 startup: out/startup/kstart.o out/startup/startup.o
