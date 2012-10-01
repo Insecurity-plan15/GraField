@@ -25,6 +25,7 @@ typedef unsigned int size_t;
 #endif
 #endif
 
+/* Define inline */
 #if defined(__GNUC__) || defined(__GNUG__)
 #ifndef inline
 #define inline __inline__
