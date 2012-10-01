@@ -33,8 +33,8 @@ typedef unsigned int size_t;
 #endif
 
 /* Define useful types like u16, s32 */
-typedef signed   char      int s8;
-typedef unsigned char      int u8;
+typedef signed   char          s8;
+typedef unsigned char          u8;
 typedef signed   short     int s16;
 typedef unsigned short     int u16;
 typedef signed   long      int s32;
