@@ -1,0 +1,144 @@
+GraField Coding Style
+=====================
+
+1. C coding style
+  1)  Vim configuration.
+    Add this to your .vimrc
+      au FileType c,cpp,h,hpp set ai et sts=4 sw=4 ts=8
+
+  2)  Ident.
+    Use 4 chars of space for ident, never use Tab.
+
+  3)  Empty lines.
+    Add an empty line between functions, a sort of variable definition.
+    Leave an empty line after #include.
+    In a long function (although long functions are not recommended), if you
+    think that several lines of code have a closer connection, seperate them
+    with empty lines from other lines.
+
+  4)  Spaces.
+    Add a space:
+      - After a comma, a colon, a semi-colon (Unless it is the last char of a
+        line)
+      - Before and after a single equal sign
+      - After #include (Write #include <stdio.h> instead of #include<stdio.h> )
+      - After type cast (Write (int) a instead of (int)a )
+      - After return and sizeof
+    Do not add spaces:
+      - Before a comma, a colon, a semi-colon (Except for __asm__, leave a
+        space both before and after a colon)
+      - Before or after an operator (Except for ?: operator, leave spaces both
+        before and after ? and : )
+      - After function name in a function defination or function call
+      - After ( [ { or before ) ] }
+      - After if, while, switch, for
+      - Before or after == or !=
+      - At the end of a line
+      - In an empty line
+
+  5)  return and sizeof.
+    return and sizeof are not functions, they are keywords.
+    Write return 0     instead of return(0)
+    Write sizeof a     instead of sizeof(a)
+    Write sizeof (int) instead of sizeof(int)
+
+  6)  Function naming.
+    GraField prefer MixedCase, do not write lower_case_with_underscore. (Unless
+    you are calling a function from another package that use another naming
+    style)
+    Only use abbreviations that are well known. Do not drop some letters (e.g.
+    Do not write CreatUsr(), write CreateUser() )
+    Verb-Object naming style is preferred (e.g. CreateFile() WriteString()
+    UpdateData() GetFileMode() SetWindowStyle() UpdateDataToDatabase()
+    SelectFromDatabase() )
+    As there are no namespaces in C, put your namespace name before the
+    function name (e.g. ioport_Write() )
+    If you use another package, follow that package's naming style.
+
+  7)  Variable naming.
+    Hungarian naming style or firstLowerThenUpper is preferred.
+    However, if that variable is not shared with others' work, you can use
+    either of them: lower_case_with_underscore, MixedCase, firstLowerThenUpper,
+    or Hungarian naming style.
+    For loop varibales, use i, j, k, ...
+    For a temporary variable, use tmp (e.g. Swapping variables: t = a; a = b;
+    b = t; )
+    For a temporary variable for char reading (and process it immediately), use
+    ch (e.g. ch=getchar(); if(ch==EOF) return; else ProcessChar(ch); )
+
+  8)  Const naming.
+    Use UPPER_CASE_WITH_UNDERSCORE.
+    For some variable that may cause conflicts, put two or three letters before
+    the const. (e.g. MSG_QUIT)
+
+  9)  Compiler directions.
+    For some buggy compilers, do always put compiler directions to the first
+    char of a line, do not ident.
+    For system header files, always use #include <filename> ,
+    for local header files, always use #include "filename" .
+
+  10) Example:
+
+    #include <stdio.h>
+    #include "func/datamanu.h"
+
+    int main(int argc, char *argv[])
+    {
+        if(argc==1)
+        {
+            PrintHelp();
+        }
+        else
+        {
+            register int i;
+            for(i = 1; i<argc; i++)
+                UpdateData(argv[i]); /* Now add some data */
+        }
+        return 0;
+    }
+
+2. Asm coding style
+  1)  Keep assembly usage as minimal as possible, use inline assembly or C
+      instead.
+      If assembly brings big improvements, use inline assembly instead of C.
+
+  2)  Vim configuration:
+    Add this to your .vimrc
+      au FileType s,asm set noet sts=8 sw=8 ts=8
+
+  3)  Use gas style (AT&T style).
+  4)  Define the corresponding .h file.
+  5)  Use Tab instead of spaces.
+  6)  Add a Tab in front of a instruction.
+  7)  Put assembler directions and lables to the left of a separate line.
+  8)  Always add a space after a comma unless it is the last char of a line.
+  9)  Add an empty line between 'code units', which is, several lines of code
+      that have a closer connection.
+  10) Never leave a line containing only spaces or Tabs.
+      Never leave spaces at the end of a line.
+
+  11) Example (I will use space here in this document because Tab causes a
+      mess. Use Tab in your real source):
+
+    .text
+    .globl stat
+    .globl spin
+
+    start:
+            mov     $_sys_stack, %esp
+            jmp     stublet
+
+    .align 4
+            /* Multi-boot header */
+            .long   0x1badb002
+            .long   0x3
+            .long   0xe4524ffb
+
+    stublet:
+            /* Call startup code written in C */
+            push    %ebx /* Multiboot information structure */
+            call    cstart
+
+  10) If you use inline assembly, be sure to mark all the modified registers, so
+     that you will not meet trouble when compiling with -O3 option.
+
