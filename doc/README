@@ -1,0 +1,7 @@
+GraField
+========
+GraField is a free Unix-not-like microkernel operating system.
+
+GraField inherits some of Unix spirit, but not all.
+It is planed to release under LGPL, however it depends on the real situation
+when it really releases sometime in the future.
